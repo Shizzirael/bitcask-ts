@@ -1,0 +1,4 @@
+node_modules/
+dist/
+database.log
+// Ignora completamente le librerie scaricate, il codice compilato e il mio database locale
