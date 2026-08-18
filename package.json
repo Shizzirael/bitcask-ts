@@ -1,0 +1,25 @@
+{
+  "name": "bitcask-ts",
+  "version": "1.0.0",
+  "type": "module", 
+  "description": "A lightweight, append-only Key-Value store built from scratch in Node.js and TypeScript, inspired by the Bitcask architecture.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shizzirael/bitcask-ts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shizzirael/bitcask-ts/issues"
+  },
+  "homepage": "https://github.com/Shizzirael/bitcask-ts#readme",
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
+  }
+}
