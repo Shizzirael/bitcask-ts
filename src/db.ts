@@ -1,6 +1,4 @@
-import { lookup } from 'dns';
 import * as fs from 'fs/promises';
-import { findSourceMap } from 'module';
 
 // la "struct" per i metadati
 type Metadati = {
@@ -47,5 +45,33 @@ export async function eseguiSet(chiave: string, valore: string) {
     }
 
 export async function eseguiGet(chiave: string) {
-    
+    // controllo della chiave
+    if (!keyDir.has(chiave)) {
+        console.log(`Errore: la chiave '${chiave}' non è presente nel database.`);
+        return; 
+    }
+
+    // prendo le coordinate dimensione e posizione in base alla chiave
+    const metadati = keyDir.get(chiave)!;
+
+    let fileHandle;
+    try {
+        // apro il file log e alloco la memoria necessaria (l'ho appena ricavata in base alla chiave)
+        fileHandle = await fs.open("database.log", 'r');
+        const buffer = Buffer.alloc(metadati.dimensione);
+
+        await fileHandle.read(buffer, 0, metadati.dimensione, metadati.posizione);
+
+        const stringaLetta = buffer.toString('utf-8');
+        const record = JSON.parse(stringaLetta);
+
+        console.log(`Valore trovato:`, record.value);
+
+    } catch (errore) {
+        console.error("Errore critico durante la lettura dal disco:", errore);
+    } finally { // a prescindere viene eseguito
+        if (fileHandle) {
+            await fileHandle.close();
+        }
+    }
 }

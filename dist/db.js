@@ -1,11 +1,9 @@
-import { lookup } from 'dns';
 import * as fs from 'fs/promises';
-import { findSourceMap } from 'module';
 export const keyDir = new Map();
 export async function eseguiSet(chiave, valore) {
-    // crea una "sruttura" (si chiama oggetto in js) data, da salvare nel disco, salva tutto, chiave valore e dimensione.
+    // crea una "sruttura" data, da salvare nel disco, salva chiave e valore.
     const data = JSON.stringify({ key: chiave, value: valore }) + "\n";
-    // calcola la dimensione in byte del valore inserito
+    // calcola la dimensione in byte del dato inserito, non solo il valore
     const byteSize = Buffer.byteLength(data, 'utf-8');
     console.log("Dimensione in byte:", byteSize);
     // calcola l'offset (quindi il peso attuale del file visto che inseriamo i dati alla fine)
@@ -32,5 +30,30 @@ export async function eseguiSet(chiave, valore) {
     }
 }
 export async function eseguiGet(chiave) {
+    // controllo della chiave
+    if (!keyDir.has(chiave)) {
+        console.log(`Errore: la chiave '${chiave}' non è presente nel database.`);
+        return;
+    }
+    // prendo le coordinate dimensione e posizione in base alla chiave
+    const metadati = keyDir.get(chiave);
+    let fileHandle;
+    try {
+        // apro il file log e alloco la memoria necessaria (l'ho appena ricavata in base alla chiave)
+        fileHandle = await fs.open("database.log", 'r');
+        const buffer = Buffer.alloc(metadati.dimensione);
+        await fileHandle.read(buffer, 0, metadati.dimensione, metadati.posizione);
+        const stringaLetta = buffer.toString('utf-8');
+        const record = JSON.parse(stringaLetta);
+        console.log(`Valore trovato:`, record.value);
+    }
+    catch (errore) {
+        console.error("Errore critico durante la lettura dal disco:", errore);
+    }
+    finally { // a prescindere viene eseguito
+        if (fileHandle) {
+            await fileHandle.close();
+        }
+    }
 }
 //# sourceMappingURL=db.js.map
